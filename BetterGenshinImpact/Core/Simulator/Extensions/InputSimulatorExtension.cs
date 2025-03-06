@@ -71,16 +71,7 @@ public static class InputSimulatorExtension
                 self.Mouse.XButtonClick(0x0001);
                 break;
             default:
-                var k = key.ToVK();
-                // 解决 shift 之类的键位没法正常使用的问题
-                if (InputBuilder.IsExtendedKey(k))
-                {
-                    self.Keyboard.KeyPress(false, k);
-                }
-                else
-                {
-                    self.Keyboard.KeyPress(k);
-                }
+                self.Keyboard.KeyPress(key.ToVK());
                 break;
         }
     }
@@ -108,16 +99,7 @@ public static class InputSimulatorExtension
                 self.Mouse.XButtonDown(0x0001);
                 break;
             default:
-                var k = key.ToVK();
-                // 解决 shift 之类的键位没法正常使用的问题
-                if (InputBuilder.IsExtendedKey(k))
-                {
-                    self.Keyboard.KeyDown(false, k);
-                }
-                else
-                {
-                    self.Keyboard.KeyDown(k);
-                }
+                self.Keyboard.KeyDown(key.ToVK());
                 break;
         }
     }
@@ -145,16 +127,7 @@ public static class InputSimulatorExtension
                 self.Mouse.XButtonUp(0x0001);
                 break;
             default:
-                var k = key.ToVK();
-                // 解决 shift 之类的键位没法正常使用的问题
-                if (InputBuilder.IsExtendedKey(k))
-                {
-                    self.Keyboard.KeyUp(false, k);
-                }
-                else
-                {
-                    self.Keyboard.KeyUp(k);
-                }
+                self.Keyboard.KeyUp(key.ToVK());
                 break;
         }
     }

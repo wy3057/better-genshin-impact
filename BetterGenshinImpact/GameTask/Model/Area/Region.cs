@@ -1,6 +1,5 @@
 ﻿using BetterGenshinImpact.GameTask.Model.Area.Converter;
 using BetterGenshinImpact.View.Drawable;
-using Fischless.WindowsInput;
 using OpenCvSharp;
 using System;
 using System.Diagnostics;
@@ -55,7 +54,7 @@ public class Region : IDisposable
     {
     }
 
-    public Region(int x, int y, int width, int height, Region? owner = null, INodeConverter? converter = null, DrawContent? drawContent = null)
+    public Region(int x, int y, int width, int height, Region? owner = null, INodeConverter? converter = null)
     {
         X = x;
         Y = y;
@@ -63,7 +62,6 @@ public class Region : IDisposable
         Height = height;
         Prev = owner;
         PrevConverter = converter;
-        this.drawContent = drawContent ?? VisionContext.Instance().DrawContent;
     }
 
     public Region(Rect rect, Region? owner = null, INodeConverter? converter = null) : this(rect.X, rect.Y, rect.Width, rect.Height, owner, converter)
@@ -76,11 +74,6 @@ public class Region : IDisposable
     /// 本区域节点向上一个区域节点坐标的转换器
     /// </summary>
     public INodeConverter? PrevConverter { get; }
-
-    /// <summary>
-    /// 绘图上下文
-    /// </summary>
-    private readonly DrawContent drawContent;
 
     // public List<Region>? NextChildren { get; protected set; }
 
@@ -196,13 +189,13 @@ public class Region : IDisposable
     public void DrawRect(int x, int y, int w, int h, string name, Pen? pen = null)
     {
         var drawable = ToRectDrawable(x, y, w, h, name, pen);
-        drawContent.PutRect(name, drawable);
+        VisionContext.Instance().DrawContent.PutRect(name, drawable);
     }
 
     public void DrawRect(Rect rect, string name, Pen? pen = null)
     {
         var drawable = ToRectDrawable(rect.X, rect.Y, rect.Width, rect.Height, name, pen);
-        drawContent.PutRect(name, drawable);
+        VisionContext.Instance().DrawContent.PutRect(name, drawable);
     }
 
     /// <summary>
@@ -266,7 +259,7 @@ public class Region : IDisposable
     public void DrawLine(int x1, int y1, int x2, int y2, string name, Pen? pen = null)
     {
         var drawable = ToLineDrawable(x1, y1, x2, y2, name, pen);
-        drawContent.PutLine(name, drawable);
+        VisionContext.Instance().DrawContent.PutLine(name, drawable);
     }
 
     public Rect ConvertSelfPositionToGameCaptureRegion()
@@ -356,7 +349,7 @@ public class Region : IDisposable
     /// <returns></returns>
     public Region Derive(int x, int y, int w, int h)
     {
-        return new Region(x, y, w, h, this, new TranslationConverter(x, y), this.drawContent);
+        return new Region(x, y, w, h, this, new TranslationConverter(x, y));
     }
 
     public Region Derive(Rect rect)

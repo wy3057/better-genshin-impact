@@ -1,4 +1,4 @@
-﻿using BetterGenshinImpact.Service.Notification.Model;
+using BetterGenshinImpact.Service.Notification.Model;
 using BetterGenshinImpact.Service.Notifier;
 using BetterGenshinImpact.Service.Notifier.Exception;
 using BetterGenshinImpact.Service.Notifier.Interface;
@@ -12,6 +12,7 @@ using BetterGenshinImpact.GameTask;
 using BetterGenshinImpact.GameTask.Common;
 using BetterGenshinImpact.Service.Notification.Model.Enum;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace BetterGenshinImpact.Service.Notification;
 
@@ -49,7 +50,6 @@ public class NotificationService : IHostedService
         return Task.CompletedTask;
     }
 
-
     private void InitializeNotifiers()
     {
         if (TaskContext.Instance().Config.NotificationConfig.WebhookEnabled)
@@ -70,6 +70,16 @@ public class NotificationService : IHostedService
         if (TaskContext.Instance().Config.NotificationConfig.WorkweixinNotificationEnabled)
         {
             _notifierManager.RegisterNotifier(new WorkWeixinNotifier(NotifyHttpClient, TaskContext.Instance().Config.NotificationConfig.WorkweixinWebhookUrl));
+        }
+
+        if (TaskContext.Instance().Config.NotificationConfig.WebSocketNotificationEnabled)
+        {
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            };
+            var cts = new CancellationTokenSource();
+            _notifierManager.RegisterNotifier(new WebSocketNotifier(TaskContext.Instance().Config.NotificationConfig.WebSocketEndpoint, jsonSerializerOptions, cts));
         }
     }
 

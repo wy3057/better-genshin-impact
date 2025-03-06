@@ -28,8 +28,6 @@ using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Violeta.Controls;
 using BetterGenshinImpact.ViewModel.Pages.View;
-using System.Linq;
-using Vanara.Extensions;
 
 namespace BetterGenshinImpact.ViewModel.Pages;
 
@@ -110,28 +108,13 @@ public partial class TaskSettingsPageViewModel : ObservableObject, INavigationAw
 
     [ObservableProperty]
     private AutoFightViewModel? _autoFightViewModel;
-
+    
     [ObservableProperty]
     private bool _switchAutoFishingEnabled;
 
     [ObservableProperty]
     private string _switchAutoFishingButtonText = "启动";
 
-    [ObservableProperty]
-    private int _wholeProcessTimeoutSeconds = 300;
-
-    [ObservableProperty]
-    private FishingTimePolicy _fishingTimePolicy;
-
-    [ObservableProperty]
-    private Dictionary<FishingTimePolicy, string> _fishingTimePolicyDict = Enum.GetValues(typeof(FishingTimePolicy)).Cast<FishingTimePolicy>().Select(e => new KeyValuePair<FishingTimePolicy, string>(e, e.GetDescription() ?? "Description lost!")).ToDictionary();
-
-    private bool saveScreenshotOnKeyTick;
-    public bool SaveScreenshotOnKeyTick
-    {
-        get => Config.CommonConfig.ScreenshotEnabled && saveScreenshotOnKeyTick;
-        set => SetProperty(ref saveScreenshotOnKeyTick, value);
-    }
 
     public TaskSettingsPageViewModel(IConfigService configService, INavigationService navigationService, TaskTriggerDispatcher taskTriggerDispatcher)
     {
@@ -143,7 +126,7 @@ public partial class TaskSettingsPageViewModel : ObservableObject, INavigationAw
 
         //_combatStrategyList = ["根据队伍自动选择", .. LoadCustomScript(Global.Absolute(@"User\AutoFight"))];
 
-        _domainNameList = ["", .. MapLazyAssets.Instance.DomainNameList];
+        _domainNameList = ["", ..MapLazyAssets.Instance.DomainNameList];
         _autoFightViewModel = new AutoFightViewModel(Config);
     }
 
@@ -400,13 +383,13 @@ public partial class TaskSettingsPageViewModel : ObservableObject, INavigationAw
             .RunSoloTaskAsync(new AutoAlbumTask(new AutoMusicGameParam()));
         SwitchAutoAlbumEnabled = false;
     }
-
+    
     [RelayCommand]
     private async Task OnSwitchAutoFishing()
     {
         SwitchAutoFishingEnabled = true;
         await new TaskRunner(DispatcherTimerOperationEnum.UseSelfCaptureImage)
-            .RunSoloTaskAsync(new AutoFishingTask(new AutoFishingTaskParam(WholeProcessTimeoutSeconds, Config.AutoFishingConfig.AutoThrowRodTimeOut, FishingTimePolicy, SaveScreenshotOnKeyTick)));
+            .RunSoloTaskAsync(new AutoFishingTask());
         SwitchAutoFishingEnabled = false;
     }
 

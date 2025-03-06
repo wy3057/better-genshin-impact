@@ -332,10 +332,6 @@ public class AutoFightTask : ISoloTask
                 Debug.WriteLine(e.StackTrace);
                 throw;
             }
-            finally
-            {
-                Simulation.ReleaseAllKey();
-            }
         }, cts2.Token);
 
         await fightTask;
